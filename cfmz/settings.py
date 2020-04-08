@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'index',
+    'rotation',
 ]
 
 MIDDLEWARE = [
@@ -77,8 +78,13 @@ WSGI_APPLICATION = 'cfmz.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cmfz',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'PORT': 3306,
+        'HOST': '127.0.0.1',
+
     }
 }
 
@@ -121,3 +127,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+API_KEY = "40d6180426417bfc57d0744a362dc108"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
