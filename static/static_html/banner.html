@@ -1,7 +1,7 @@
 <script>
     $(function () {
         $("#carouseltable").jqGrid({
-            url: "{% url 'rotation:getall' %}",
+            url: "/cmfz/getall",
             datatype: 'json',
             styleUI: "Bootstrap",
             autowidth: true,
@@ -10,7 +10,7 @@
             rowList: [2, 5, 10],
             viewrecords: true,
             cellEdit: true,
-            editurl: '{% url 'rotation:edit' %}',
+            editurl: '/cmfz/edit',
             colNames: ["ID", "描述", "上传时间", "是否显示", "图片", "操作"],
             colModel: [
                 {name: "id"},
@@ -55,7 +55,7 @@
             formData.append("pic", pic);
 
             $.ajax({
-                url: "{% url 'rotation:add' %}",
+                url: "/cmfz/add",
                 type: "post",
                 data: formData,
                 processData: false,     // 使数据不做处理
