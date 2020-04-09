@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cmfz/', include('index.urls')),
     path('cmfz/', include('rotation.urls')),
+    path('cmfz/', include('user.urls')),
 ]

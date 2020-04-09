@@ -1,0 +1,226 @@
+<script>
+    $(function () {
+        $("#carouseltable").jqGrid({
+            url: "/cmfz/getalluser",
+            datatype: 'json',
+            styleUI: "Bootstrap",
+            autowidth: true,
+            pager: "#page",
+            rowNum: 5,
+            rowList: [5, 8, 10],
+            viewrecords: true,
+            cellEdit: true,
+            editurl: '/cmfz/edituser',
+            colNames: ["ID", "用户名", "宗教名", "是否上师", "头像", "邮箱", "地址", "个人说明", "注册时间", "操作"],
+            colModel: [
+                {name: "id"},
+                {name: "name", editable: true},
+                {name: "religions_name", editable: true},
+                {
+                    name: "status",
+                    editable: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue === false) return '普通用户'
+                        else return '上师'
+                    }
+                },
+                {
+                    name: "img_url",
+                    editable: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        return "<img style='height:50px' src='/static/" + cellvalue + "'>"
+                    }
+                },
+                {name: "email", editable: true},
+                {name: "addr", editable: true},
+                {name: "detail", editable: true},
+                {name: "regist_time"},
+                {
+                    name: 'options', formatter: function (cellvalue, options, rowObject) {
+                        return "<button class=\"btn btn-warning\"  style=\"width: 40px\" name='edit' onclick=\"edit(" + rowObject.id + ")\">改</button>" +' '+
+                            "<button class=\"btn btn-danger\" style=\"width: 40px\" name='del' onclick=\"del(" + rowObject.id + ")\">删</button>"
+                    }
+                },
+            ],
+
+        });
+
+
+        // 模态框提交
+        $("#save").click(function () {
+            // 通过formdata获取文件的值
+            var title = $("#upload_title").val();
+            var status = $("#upload_status").val();
+            var pic = $("#upload_pic")[0].files[0];
+
+            var formData = new FormData();
+            formData.append("title", title);
+            formData.append("status", status);
+            formData.append("pic", pic);
+
+            $.ajax({
+                url: "/cmfz/add",
+                type: "post",
+                data: formData,
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function () {
+                    $('#carouseltable').modal('hide');// 根据保存的返回值进行处理
+                    $('#carouseltable').trigger("reloadGrid");// 刷新jqgrid表格
+                }
+            });
+        });
+
+    });
+
+    function edit(row_id) {
+        $("#carouseltable").jqGrid('editGridRow', row_id, {
+            height: 400,
+            reloadAfterSubmit: true
+        });
+    }
+
+    function del(row_id) {
+        $("#carouseltable").jqGrid('delGridRow', row_id, {
+            reloadAfterSubmit: true
+        });
+    }
+</script>
+
+
+<div class="page-header">
+    <h2>用户信息管理</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>用户信息</b></a></li>
+</ul>
+<div class="panel panel-default" style="padding: 40px">
+    <table id="carouseltable"></table>
+
+    <div class="alert alert-success" role="alert" id="addBannerMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="page" style="width: auto;height: 50px"></div>
+    <button class="btn btn-primary" data-aa="@456" data-whatever="@123" id="btn" data-toggle="modal"
+            data-target="#carouselModal">添加
+    </button>
+</div>
+<body>
+<div class="modal fade" id="carouselModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <div class="modal-header">
+                <!--用来关闭模态框的属性:data-dismiss="modal"-->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">新增用户</h4>
+            </div>
+            <div class="modal-body">
+                <form action="" id="bannerForm">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">用户名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="name" id="upload_name" class="form-control"
+                                       placeholder="请输入用户名">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">宗教名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="religions_name" id="upload_religions_name" class="form-control"
+                                       placeholder="请输入宗教名（选填）">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">密码：</label>
+                            <div class="col-sm-10">
+                                <input type="password" name="password" id="upload_password" class="form-control"
+                                       placeholder="修改密码">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">是否是上师：</label>
+                            <div class="col-sm-10">
+                                <select type="text" name="status" id="upload_status" class="form-control"
+                                        placeholder="请选择">
+                                    <option value="1">是</option>
+                                    <option value="0">不是</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">地址：</label>
+                            <div class="col-sm-10">
+                                <select type="text" name="address" id="upload_address" class="form-control"
+                                        placeholder="请选择">
+                                    <option value="北京">北京</option>
+                                    <option value="天津">天津</option>
+                                    <option value="河北">河北</option>
+                                    <option value="山西">山西</option>
+                                    <option value="内蒙古">内蒙古</option>
+                                    <option value="吉林">吉林</option>
+                                    <option value="黑龙江">黑龙江</option>
+                                    <option value="辽宁">辽宁</option>
+                                    <option value="上海">上海</option>
+                                    <option value="江苏">江苏</option>
+                                    <option value="浙江">浙江</option>
+                                    <option value="安徽">安徽</option>
+                                    <option value="福建">福建</option>
+                                    <option value="江西">江西</option>
+                                    <option value="山东">山东</option>
+                                    <option value="河南">河南</option>
+                                    <option value="湖北">湖北</option>
+                                    <option value="湖南">湖南</option>
+                                    <option value="广东">广东</option>
+                                    <option value="广西">广西</option>
+                                    <option value="海南">海南</option>
+                                    <option value="重庆">重庆</option>
+                                    <option value="四川">四川</option>
+                                    <option value="贵州">贵州</option>
+                                    <option value="云南">云南</option>
+                                    <option value="西藏">西藏</option>
+                                    <option value="陕西">陕西</option>
+                                    <option value="甘肃">甘肃</option>
+                                    <option value="青海">青海</option>
+                                    <option value="宁夏">宁夏</option>
+                                    <option value="新疆">新疆</option>
+                                    <option value="香港">香港</option>
+                                    <option value="澳门">澳门</option>
+                                    <option value="台湾">台湾</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">邮箱：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="email" id="upload_email" class="form-control"
+                                       placeholder="请输入邮箱">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">头像：</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="pic" id="upload_pic" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">个人说明：</label>
+                            <div class="col-sm-10">
+                                <label for="upload_details"></label>
+                                <textarea name="details" id="upload_details" class="form-control" placeholder="请输入邮箱">
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="save">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
