@@ -3,8 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="/static/js/echarts.js"></script>
+    <script src="/static/boot/js/jquery-3.3.1.min.js/"></script>
 </head>
 <body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="page-header">
+    <h2>用户注册趋势图</h2>
+</div>
+<div id="main" style="width: 1000px;height:500px;margin: 20px auto"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 异步加载数据
+    var date= new Date();
+    var nowdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+    var newDate = new Date(date.getTime() - 7*24*60*60*1000);
+    var day1 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var newDate = new Date(date.getTime() - 6*24*60*60*1000);
+    var day2 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var newDate = new Date(date.getTime() - 5*24*60*60*1000);
+    var day3 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var newDate = new Date(date.getTime() - 4*24*60*60*1000);
+    var day4 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var newDate = new Date(date.getTime() - 3*24*60*60*1000);
+    var day5 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var newDate = new Date(date.getTime() - 3*24*60*60*1000);
+    var day6 = newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate();
+    var formData = new FormData();
+    formData.append("day1", day1);
+    formData.append("day2", day2);
+    formData.append("day3", day3);
+    formData.append("day4", day4);
+    formData.append("day5", day5);
+    formData.append("day6", day6);
+    formData.append("day7", nowdate);
+    $.ajax({
+        url: '/cmfz/getregistinfo/',
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            myChart.setOption({
+                xAxis: {
+                    data: data['x']
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    type:'bar',
+                    name: '最近七天',
+                    data: data['y']
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    type:'line',
+                    color:'blue',
+                    name: '最近七天',
+                    data: data['y']
+                }]
+            });
+        }
+    })
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '用户注册趋势'
+        },
+        tooltip: {},
+        legend: {
+            data: ['最近七天']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {}
+    };
 
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
 </body>
 </html>

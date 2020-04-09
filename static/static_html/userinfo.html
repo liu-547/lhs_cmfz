@@ -1,16 +1,16 @@
 <script>
     $(function () {
         $("#carouseltable").jqGrid({
-            url: "/cmfz/getalluser",
+            url: "/cmfz/getalluser/",
             datatype: 'json',
             styleUI: "Bootstrap",
             autowidth: true,
             pager: "#page",
-            rowNum: 5,
-            rowList: [5, 8, 10],
+            rowNum: 3,
+            rowList: [3, 5, 10],
             viewrecords: true,
             cellEdit: true,
-            editurl: '/cmfz/edituser',
+            editurl: '/cmfz/edituser/',
             colNames: ["ID", "用户名", "宗教名", "是否上师", "头像", "邮箱", "地址", "个人说明", "注册时间", "操作"],
             colModel: [
                 {name: "id"},
@@ -18,21 +18,22 @@
                 {name: "religions_name", editable: true},
                 {
                     name: "status",
-                    editable: true,
                     formatter: function (cellvalue, options, rowObject) {
-                        if (cellvalue === false) return '普通用户'
-                        else return '上师'
+                        if (cellvalue === 0){
+                            return '普通用户'
+                        }else {
+                            return '上师'
+                        }
                     }
                 },
                 {
                     name: "img_url",
-                    editable: true,
                     formatter: function (cellvalue, options, rowObject) {
                         return "<img style='height:50px' src='/static/" + cellvalue + "'>"
                     }
                 },
                 {name: "email", editable: true},
-                {name: "addr", editable: true},
+                {name: "addr"},
                 {name: "detail", editable: true},
                 {name: "regist_time"},
                 {
@@ -49,17 +50,27 @@
         // 模态框提交
         $("#save").click(function () {
             // 通过formdata获取文件的值
-            var title = $("#upload_title").val();
+            var name = $("#upload_name").val();
             var status = $("#upload_status").val();
             var pic = $("#upload_pic")[0].files[0];
+            var religions_name = $("#upload_religions_name").val()
+            var password = $("#upload_password").val()
+            var address = $("#upload_address").val()
+            var details = $("#upload_details").val()
+            var email = $("#upload_email").val()
 
             var formData = new FormData();
-            formData.append("title", title);
+            formData.append("name", name);
             formData.append("status", status);
+            formData.append("religions_name", religions_name);
+            formData.append("password", password);
+            formData.append("address", address);
+            formData.append("details", details);
+            formData.append("email", email);
             formData.append("pic", pic);
 
             $.ajax({
-                url: "/cmfz/add",
+                url: "/cmfz/adduser/",
                 type: "post",
                 data: formData,
                 processData: false,     // 使数据不做处理
