@@ -190,9 +190,9 @@ class DjangoSession(models.Model):
 
 class Rotation(models.Model):
     title = models.CharField(max_length=20)
-    publish_time = models.DateTimeField()
+    publish_time = models.DateField(auto_now_add=True)
     status = models.IntegerField()
-    img_url = models.CharField(max_length=100)
+    img_url = models.ImageField(upload_to='pic')
 
     class Meta:
         managed = False
