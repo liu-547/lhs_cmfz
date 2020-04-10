@@ -5,6 +5,7 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from redis import Redis
 
 from index.models import *
 
@@ -90,45 +91,57 @@ def edit_user(request):
 
 @csrf_exempt
 def get_registinfo(request):
-    today = datetime.datetime.now()
-    day1 = (today + datetime.timedelta(days=-6)).strftime('%Y-%m-%d')
-    day2 = (today + datetime.timedelta(days=-5)).strftime('%Y-%m-%d')
-    day3 = (today + datetime.timedelta(days=-4)).strftime('%Y-%m-%d')
-    day4 = (today + datetime.timedelta(days=-3)).strftime('%Y-%m-%d')
-    day5 = (today + datetime.timedelta(days=-2)).strftime('%Y-%m-%d')
-    day6 = (today + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
-    user = User.objects.all()
-    count1 = 0
-    count2 = 0
-    count3 = 0
-    count4 = 0
-    count5 = 0
-    count6 = 0
-    count7 = 0
-    for u in user:
-        if u.regist_time.strftime('%Y-%m-%d') == day1:
-            count1 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == day2:
-            count2 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == day3:
-            count3 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == day4:
-            count4 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == day5:
-            count5 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == day6:
-            count6 += 1
-        if u.regist_time.strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
-            count7 += 1
-    data = {"x": [1, 2, 3, 4, 5, 6, 7], "y": [count1, count2, count3, count4, count5, count6, count7]}
+    redis = Redis(host="localhost", port=6379)
+    data = redis.get('weekend')
+    if data:
+        data = eval(data)
+    else:
+        today = datetime.datetime.now()
+        day1 = (today + datetime.timedelta(days=-6)).strftime('%Y-%m-%d')
+        day2 = (today + datetime.timedelta(days=-5)).strftime('%Y-%m-%d')
+        day3 = (today + datetime.timedelta(days=-4)).strftime('%Y-%m-%d')
+        day4 = (today + datetime.timedelta(days=-3)).strftime('%Y-%m-%d')
+        day5 = (today + datetime.timedelta(days=-2)).strftime('%Y-%m-%d')
+        day6 = (today + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
+        user = User.objects.all()
+        count1 = 0
+        count2 = 0
+        count3 = 0
+        count4 = 0
+        count5 = 0
+        count6 = 0
+        count7 = 0
+        for u in user:
+            if u.regist_time.strftime('%Y-%m-%d') == day1:
+                count1 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == day2:
+                count2 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == day3:
+                count3 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == day4:
+                count4 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == day5:
+                count5 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == day6:
+                count6 += 1
+            if u.regist_time.strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
+                count7 += 1
+        data = {"x": [1, 2, 3, 4, 5, 6, 7], "y": [count1, count2, count3, count4, count5, count6, count7]}
+        redis.set('weekend', data, 24*60*60)
     return JsonResponse(data)
 
 
 def get_usermap(request):
-    provinces = ["北京", "天津", "河北", "山西", "内蒙古", "吉林", "黑龙江", "辽宁", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北",
-                 "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"
-                 ]
-    data = []
-    for i in provinces:
-        data.append({'name': i, 'value': len(User.objects.filter(address=i))})
+    redis = Redis(host="localhost", port=6379)
+    data = redis.get('cha')
+    if data:
+        data = eval(data)
+    else:
+        provinces = ["北京", "天津", "河北", "山西", "内蒙古", "吉林", "黑龙江", "辽宁", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北",
+                     "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"
+                     ]
+        data = []
+        for i in provinces:
+            data.append({'name': i, 'value': len(User.objects.filter(address=i))})
+        redis.set('cha', data, 24 * 60 * 60)
     return JsonResponse({'data': data})
