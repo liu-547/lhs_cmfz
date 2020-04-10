@@ -16,6 +16,8 @@
     <script src="/static/js/echarts.js"></script>
     <script src="{% static 'jqgrid/js/trirand/i18n/grid.locale-cn.js' %}"></script>
     <script src="/static/js/china.js"></script>
+    <script src="{% static 'kindeditor/kindeditor-all-min.js' %}"></script>
+    <script src="{% static 'kindeditor/lang/zh-CN.js' %}"></script>
 </head>
 <body>
 <!--顶部导航-->
@@ -69,6 +71,7 @@
                     <div id="dds" class="panel-collapse collapse ">
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
+                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/article.html" %}')">文章列表</a></li>
                             </ul>
                         </div>
                     </div>
@@ -162,7 +165,7 @@
                     用来关闭模态框的属性:data-dismiss="modal"
                 -->
                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                <h4 class="modal-title">编辑用户信息</h4>
+                <h4 class="modal-title">编辑文章信息</h4>
             </div>
 
             <!--模态框内容体-->
@@ -176,11 +179,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">状态</label>
+                        <label class="col-sm-1 control-label">类别</label>
                         <div class="col-sm-5">
                             <select class="form-control" name="status" id="status">
-                                <option value="1">展示</option>
-                                <option value="2">不展示</option>
+                                <option value="1">上师言教</option>
+                                <option value="2">显密法要</option>
                             </select>
                         </div>
                     </div>
