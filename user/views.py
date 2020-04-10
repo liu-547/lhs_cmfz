@@ -127,7 +127,7 @@ def get_registinfo(request):
             if u.regist_time.strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
                 count7 += 1
         data = {"x": [1, 2, 3, 4, 5, 6, 7], "y": [count1, count2, count3, count4, count5, count6, count7]}
-        redis.set('weekend', data, 24*60*60)
+        redis.setex('weekend', 24*60*60, str(data))
     return JsonResponse(data)
 
 
@@ -143,5 +143,5 @@ def get_usermap(request):
         data = []
         for i in provinces:
             data.append({'name': i, 'value': len(User.objects.filter(address=i))})
-        redis.set('cha', data, 24 * 60 * 60)
+        redis.setex('cha', 24 * 60 * 60, str(data))
     return JsonResponse({'data': data})
