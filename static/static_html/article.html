@@ -1,8 +1,8 @@
 <script>
     $(function () {
         $("#articleTable").jqGrid({
-            url: "/article/getALLArticle/",
-            editurl: "/article/editArticle",
+            url: "/cmfz/getallarticle/",
+            editurl: '/cmfz/delarticle/',
             datatype: "json",
             styleUI: "Bootstrap",
             autowidth: true,
@@ -13,14 +13,23 @@
             viewrecords: true,
             rownumbers: true,
             multiselect: true,
-            colNames: ["编号", "内容", "标题", "状态", "上传时间", "发布时间", "操作"],
+            colNames: ["ID", "内容", "标题", "作者", "分类", "发布时间", "操作"],
             colModel: [
                 {name: "id", hidden: true,},
                 {name: "content", hidden: true,},
                 {name: "title",},
-                {name: "status",},
-                {name: "createDate",},
-                {name: "publishDate",},
+                {name: "author",},
+                {
+                    name: "cate",
+                    formatter: function (cellvalue) {
+                        if (cellvalue === 1){
+                            return '上师言教'
+                        }else {
+                            return '显密法要'
+                        }
+                    }
+                },
+                {name: "publishtime",},
                 {
                     name: "option",
                     formatter: function (cellvalue, options, rowObject) {//JSON.stringify(rowObject).replace(/"/g, '&quot;
@@ -36,47 +45,98 @@
 
     // 触发添加文章的模态框
     function showAddArticle() {
-        $('#myModal').modal('show');
-        KindEditor.create("#editor_id", {
+        $('#addmyModal').modal('show');
+        $("#title").val('');
+        $('#author').val('')
+        KindEditor.html("#article_content", '');
+        KindEditor.create("#article_content", {
+            width: '100px',
+            height: '300px',
+            items: [
+                'source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall',
+                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'multiimage',
+                'flash', 'media', 'insertfile', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink'
+            ],
             allowFileManager: true,
-            uploadJson: "/article/upload/",
-            fileManagerJson: "/article/get_all_img/",
+            uploadJson: "/cmfz/uploadimg/",
+            fileManagerJson: "/cmfz/getallimg/",
             resizeType: 1,
             // 提交文章内容时必须将富文本框的值同步到 textarea中 否则后台无法获取值
             afterBlur: function () {
                 this.sync()
             }
         });
-        $("#modal_footer").html('<button type="button" class="btn btn-primary" onclick="addArticle()">保存</button> ' +
-            '<button class="btn btn-warning" data-dismiss="modal">取消</button>')
     }
 
     // 点击保存按钮  进行文章的保存
     function addArticle() {
+        console.log($("#add_form").serialize())
         $.ajax({
-            url: "/article/add_article/",
-            type: 'get',
+            url: "/cmfz/addarticle/",
+            type: 'post',
             datatype: 'json',
-            data: $("#addArticleFrom").serialize(),
+            data: $("#add_form").serialize(),
             success: function (data) {
-                // 根据返回值做对应的处理  例如：刷新表格  关闭模态框
+                $('#addmyModal').modal('hide');// 根据保存的返回值进行处理
+                $('#articleTable').trigger("reloadGrid");// 刷新jqgrid表格
             }
         })
+    }
+    function editArticle() {
+        var formData = new FormData();
+        formData.append('id', $('#editid').html())
+        formData.append("title", $('#edittitle').val());
+        formData.append("author", $('#editauthor').val());
+        formData.append("cate", $('#editcate').val());
+        formData.append("content", $('#editcontent').val());
+
+        $.ajax({
+            url: "/cmfz/editarticle/",
+            type: "post",
+            data: formData,
+            processData: false,     // 使数据不做处理
+            contentType: false,     // 不设置请求头
+            success: function () {
+                $('#myModal').modal('hide');// 根据保存的返回值进行处理
+                $('#articleTable').trigger("reloadGrid");// 刷新jqgrid表格
+            }
+        });
     }
 
     // 编辑文章的方法
     function editModel(id) {
-        // 获取当前行的值
-        let data = $("#articleTable").jqGrid("getRowData", id);
-        // 进行值得回显
-        $("#title").val(data.title);
-        KindEditor.html("#editor_id", data.content);
-
+        let row_data = $("#articleTable").jqGrid("getRowData", id);
         $("#myModal").modal("show");
-        KindEditor.create("#editor_id", {
+        $('#editid').html(row_data.id)
+        $("#edittitle").val(row_data.title);
+        $('#editauthor').val(row_data.author)
+        if(row_data.cate === '上师言教'){
+            $("#editcate").val('1')
+        }else {
+            $("#editcate").val('0')
+        }
+        $("#editcontent").html(row_data.content);
+        KindEditor.create("#editcontent", {
+            width: '100px',
+            height: '300px',
+            items: [
+                'source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall',
+                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'multiimage',
+                'flash', 'media', 'insertfile', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink'
+            ],
             allowFileManager: true,
-            uploadJson: "/article/upload/",
-            fileManagerJson: "/article/get_all_img/",
+            uploadJson: "/cmfz/uploadimg/",
+            fileManagerJson: "/cmfz/getallimg/",
             resizeType: 1,
             // 提交文章内容时必须将富文本框的值同步到 textarea中 否则后台无法获取值
             afterBlur: function () {
@@ -85,6 +145,11 @@
         });
     }
 
+    function delModel(row_id) {
+        $("#articleTable").jqGrid('delGridRow', row_id, {
+            reloadAfterSubmit: true
+        });
+    }
 
 </script>
 
@@ -99,4 +164,110 @@
 <div class="panel panel-default">
     <table id="articleTable"></table>
     <div id="articlePager" style="width: auto;height: 50px"></div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:850px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑文章</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <form action="" id="edit_form">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">ID：</label>
+                            <div class="col-sm-10">
+                                <span class="text-info" id="editid"></span>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">标题：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" id="edittitle" class="form-control"
+                                       placeholder="请输入文章标题">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">作者：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="author" id="editauthor" class="form-control" placeholder="作者">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">类别：</label>
+                            <div class="col-sm-10">
+                                <select name="cate" id="editcate" class="form-control">
+                                    <option value="0">显密法要</option>
+                                    <option value="1">上师言教</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">内容：</label>
+                            <div class="col-sm-10">
+                                <textarea name="content" id="editcontent"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" onclick="editArticle()">保存</button> 
+                <button class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addmyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:850px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">新增文章</h4>
+            </div>
+             <div class="modal-body">
+                <form action="" id="add_form">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">标题：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" id="title" class="form-control"
+                                       placeholder="请输入文章标题">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">作者：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="author" id="author" class="form-control" placeholder="作者">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">类别：</label>
+                            <div class="col-sm-10">
+                                <select name="cate" id="cate" class="form-control">
+                                    <option value="0">显密法要</option>
+                                    <option value="1">上师言教</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">内容：</label>
+                            <div class="col-sm-10">
+                                <textarea name="content" id="article_content"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" onclick="addArticle()">保存</button> 
+                <button class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
 </div>

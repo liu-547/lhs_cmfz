@@ -21,4 +21,5 @@ urlpatterns = [
     path('cmfz/', include('index.urls')),
     path('cmfz/', include('rotation.urls')),
     path('cmfz/', include('user.urls')),
+    path('cmfz/', include('article.urls')),
 ]

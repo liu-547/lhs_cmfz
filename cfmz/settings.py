@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'index',
     'rotation',
     'user',
+    'article',
 ]
 
 MIDDLEWARE = [
