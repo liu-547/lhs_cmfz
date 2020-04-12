@@ -48,7 +48,7 @@ class Article(models.Model):
 
 class Pic(models.Model):
     pics = models.ImageField(upload_to='article_pic')
-    article_id = models.ForeignKey(to=Article, on_delete=DO_NOTHING)
+    # article_id = models.ForeignKey(to=Article, on_delete=DO_NOTHING)
 
     class Meta:
         managed = False

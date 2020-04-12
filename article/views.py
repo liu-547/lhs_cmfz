@@ -99,16 +99,16 @@ def upload_img(request):
 
     if file:
         # 获取图片所在的服务的全路径
-        img_url = request.scheme + "://" + request.get_host() + "/static/img/" + str(file)
+        img_url = request.scheme + "://" + request.get_host() + "/static/article_pic/" + str(file)
         result = {"error": 0, "url": img_url}
-        Pic.objects.create(img=file)
+        Pic.objects.create(pics=file)
     else:
         result = {"error": 1, "url": "上传失败"}
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 def get_all_img(request):
-    pic_dir = request.scheme + "://" + request.get_host() + '/static/'
+    pic_dir = request.scheme + "://" + request.get_host() + '/static/article_pic/'
     pic_list = Pic.objects.all()
     rows = []
     for i in list(pic_list):
