@@ -24,9 +24,9 @@ class Album(models.Model):
     broadcast = models.CharField(max_length=20)
     chapter_count = models.IntegerField()
     content = models.TextField()
-    score = models.SmallIntegerField()
-    publish_time = models.DateTimeField()
-    img_src = models.CharField(max_length=40)
+    score = models.FloatField()
+    publish_time = models.DateField(auto_now_add=True)
+    img_src = models.ImageField(upload_to='album_pic')
 
     class Meta:
         managed = False
@@ -123,9 +123,9 @@ class AuthUserUserPermissions(models.Model):
 
 class Chapter(models.Model):
     title = models.CharField(max_length=20)
-    size = models.DecimalField(max_digits=6, decimal_places=2)
-    url = models.CharField(max_length=20)
-    time_long = models.SmallIntegerField()
+    size = models.FloatField()
+    url = models.FileField(upload_to='music')
+    time_long = models.IntegerField()
     album_id = models.IntegerField()
 
     class Meta:

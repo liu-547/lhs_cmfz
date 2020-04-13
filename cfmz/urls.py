@@ -22,4 +22,5 @@ urlpatterns = [
     path('cmfz/', include('rotation.urls')),
     path('cmfz/', include('user.urls')),
     path('cmfz/', include('article.urls')),
+    path('cmfz/', include('album.urls')),
 ]
