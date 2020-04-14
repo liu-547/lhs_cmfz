@@ -52,11 +52,15 @@
                     </div>
                     <div id="aa" class="panel-collapse collapse">
                         <div class="panel-body">
+
+                            {% if request.session.flag == 1 or request.session.flag == 2 or request.session.flag == 3 or request.session.flag == 4%}
                             <ul class="nav nav-pills nav-stacked">
                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/userinfo.html" %}')">用户列表</a></li>
                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/registinfo.html" %}')">七日用户注册统计</a></li>
                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/usermap.html" %}')">全国用户分布</a></li>
                             </ul>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>
@@ -70,9 +74,13 @@
                     </div>
                     <div id="dds" class="panel-collapse collapse ">
                         <div class="panel-body">
+
+                            {% if request.session.flag == 2 or request.session.flag == 3 or request.session.flag == 4%}
                             <ul class="nav nav-pills nav-stacked">
                                  <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/article.html" %}')">文章列表</a></li>
                             </ul>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>
@@ -85,9 +93,11 @@
                     </div>
                     <div id="dd" class="panel-collapse collapse ">
                         <div class="panel-body">
+                            {% if request.session.flag == 3 or request.session.flag == 4%}
                             <ul class="nav nav-pills nav-stacked">
                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/album.html" %}')">专辑列表</a></li>
                             </ul>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -100,9 +110,11 @@
                     </div>
                     <div id="cc" class="panel-collapse collapse ">
                         <div class="panel-body">
+                            {% if request.session.flag == 4 %}
                             <ul class="nav nav-pills nav-stacked">
                                 <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/banner.html" %}')">轮播图列表</a></li>
                             </ul>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

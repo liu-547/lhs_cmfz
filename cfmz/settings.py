@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user',
     'article',
     'album',
+    'rbac',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rbac.permission_middleware.CheckPermission',
 ]
 
 ROOT_URLCONF = 'cfmz.urls'

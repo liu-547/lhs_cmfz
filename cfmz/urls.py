@@ -23,4 +23,5 @@ urlpatterns = [
     path('cmfz/', include('user.urls')),
     path('cmfz/', include('article.urls')),
     path('cmfz/', include('album.urls')),
+    path('cmfz/', include('rbac.urls')),
 ]
