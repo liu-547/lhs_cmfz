@@ -20,7 +20,7 @@
                     name: "status",
                     editable: true,
                     edittype: 'select',
-                    editoptions: '<select><option value=\'1\'>显示</option>" + "<option value=\'0\'>不显示</option></select>',
+                    editoptions: {value:"0:显示; 1:不显示"},
                     formatter: function (cellvalue, options, rowObject) {
                         if (cellvalue === 0){
                             return '显示'

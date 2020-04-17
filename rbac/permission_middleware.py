@@ -23,7 +23,9 @@ class CheckPermission(MiddlewareMixin):
         # 对于不需要拦截的url设置白名单
         valid_url_list = [
             '/cmfz/login/',
-            '/cmfz/index',
+            '/cmfz/index/',
+            '/cmfz/getcode/',
+            '/cmfz/checkuser/',
             '/cmfz/loginform/',
             '/cmfz/loginlogic/',
             '/cmfz/check_user/',
