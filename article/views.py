@@ -108,20 +108,21 @@ def upload_img(request):
 
 
 def get_all_img(request):
-    pic_dir = request.scheme + "://" + request.get_host() + '/static/article_pic/'
+    pic_dir = request.scheme + "://" + request.get_host() + '/static/'
     pic_list = Pic.objects.all()
     rows = []
     for i in list(pic_list):
         # 获取图片的后缀
-        path, pic_suffix = os.path.splitext(i.img.url)
+        print(i.pics.url)
+        path, pic_suffix = os.path.splitext(i.pics.url)
         rows.append({
             "is_dir": False,
             "has_file": False,
-            "filesize": i.img.size,
+            "filesize": i.pics.size,
             "dir_path": "",
             "is_photo": True,
             "filetype": pic_suffix,
-            "filename": i.img.name,
+            "filename": i.pics.name,
             "datetime": "2018-06-06 00:36:39"
         })
 
